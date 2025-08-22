@@ -1,3 +1,4 @@
+-- Inisialisasi Rayfield UI
 local Rayfield = loadstring(game:HttpGet("https://raw.githubusercontent.com/UI-Libraries/Rayfield/main/source"))()
 
 local Window = Rayfield:CreateWindow({
@@ -6,18 +7,23 @@ local Window = Rayfield:CreateWindow({
 	ResetOnClose = true
 })
 
+-- Mendapatkan layanan yang diperlukan
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
 
+-- Fungsi untuk mendapatkan checkpoint terakhir
+-- Harap dicatat: Ini adalah asumsi. Anda mungkin perlu menyesuaikan cara game menyimpan checkpoint.
+-- Seringkali checkpoint disimpan di LocalPlayer.leaderstats atau di suatu tempat di Workspace.
 local function getLastCheckpointPosition()
-    
+    -- Contoh asumsi: cari objek bernama "LastCheckpoint" di Workspace atau di playerData
     local checkpointPart = workspace:FindFirstChild("LastCheckpoint") -- Contoh sederhana
     if checkpointPart and checkpointPart:IsA("BasePart") then
         return checkpointPart.Position
     end
 
+    -- Mencari checkpoint melalui nama checkpoint dengan angka tertinggi di workspace
     local lastCheckpoint = nil
     local highestCheckpointNum = -math.huge
     for _, obj in pairs(workspace:GetDescendants()) do
@@ -33,7 +39,7 @@ local function getLastCheckpointPosition()
         return lastCheckpoint.Position
     end
 
-    
+    -- Jika tidak ditemukan, coba cari data di leaderstats atau Player.Data
     local checkpointNumberValue = nil
     if LocalPlayer:FindFirstChild("leaderstats") then
         checkpointNumberValue = LocalPlayer.leaderstats:FindFirstChild("CheckpointNumber")
@@ -52,18 +58,22 @@ local function getLastCheckpointPosition()
         end
     end
 
-    
+    -- Untuk tujuan demo, kita akan gunakan posisi dummy jika tidak ada checkpoint ditemukan.
     warn("Tidak dapat menemukan posisi checkpoint terakhir. Menggunakan posisi dummy.")
     return Vector3.new(0, 100, 0) -- Ganti dengan posisi yang lebih masuk akal jika diperlukan
 end
 
+-- Fungsi untuk mendapatkan posisi puncak
+-- Ini juga merupakan asumsi. Anda mungkin perlu menjelajahi peta untuk menemukan koordinat pastinya.
 local function getSummitPosition()
     -- Contoh posisi puncak dummy. Ganti dengan koordinat puncak Mt. Daun sebenarnya.
     return Vector3.new(-1000, 5000, 1000) -- Ganti ini dengan koordinat puncak. Anda bisa menemukannya dengan terbang di game.
 end
 
+-- Tambahkan tab utama
 local MainTab = Window:CreateTab("Teleport Utilities")
 
+-- Tambahkan bagian untuk fungsi Teleport
 local TeleportSection = MainTab:CreateSection("Teleport Options")
 
 TeleportSection:CreateButton({
